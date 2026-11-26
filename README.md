@@ -22,7 +22,7 @@ Above ×20, the add-on shows its own streak on the HUD. It passes the extra stre
 
 Challenge Environment Bolts 0.2.0 reads the full active streak from this version on Windows.
 
-PAL was tested in-game. The two NTSC-U revisions use the matching OpenRAC data addresses.
+PAL was tested in-game. The two NTSC-U revisions use the matching OpenRAC data addresses. In-game tests for those revisions are pending.
 
 ## Build
 
