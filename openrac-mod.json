@@ -1,0 +1,71 @@
+{
+  "format": 2,
+  "id": "rac2-challenge-bolt-streak",
+  "name": "Challenge Bolt Streak",
+  "version": "0.2.0",
+  "description": "Sets how Challenge Mode damage affects the bolt streak and how its cap and gain rate grow on later runs.",
+  "license": "GPL-3.0-or-later",
+  "api": "1.36",
+  "multiplayer": "gameplay",
+  "games": {
+    "rac2": [
+      "ntsc",
+      "pal",
+      "ntsc2"
+    ]
+  },
+  "hooks": [
+    "rac2.player.take_damage",
+    "rac2.moby.record_death",
+    "rac2.bolt.spawn_pickups"
+  ],
+  "load": {
+    "after": [
+      "ng-plus-plus"
+    ]
+  },
+  "settings": [
+    {
+      "key": "damage_policy",
+      "name": "Damage effect",
+      "type": "choice",
+      "default": "on_death",
+      "choices": [
+        {
+          "value": "default",
+          "name": "Default"
+        },
+        {
+          "value": "lenient",
+          "name": "Lenient"
+        },
+        {
+          "value": "on_death",
+          "name": "On Death"
+        }
+      ],
+      "description": "Default resets on damage. Lenient loses one multiplier step on nonlethal damage. On Death keeps the streak through nonlethal damage. Death resets all three."
+    },
+    {
+      "key": "growth_curve",
+      "name": "Growth curve",
+      "type": "choice",
+      "default": "proposed",
+      "choices": [
+        {
+          "value": "default",
+          "name": "Default"
+        },
+        {
+          "value": "linear",
+          "name": "Linear"
+        },
+        {
+          "value": "proposed",
+          "name": "Proposed"
+        }
+      ],
+      "description": "Default keeps x20 and stock gain. Linear adds 20 to the cap and 1x gain per cycle. Proposed uses caps 20, 50, 100, 200, 300, 400, 500 and gain rates 1x, 1.75x, 2.5x, 4x, 6x, 8x, 10x."
+    }
+  ]
+}
