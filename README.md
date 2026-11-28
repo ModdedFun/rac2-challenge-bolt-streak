@@ -18,7 +18,7 @@ For OpenRAC Going Commando NTSC-U, PAL or NTSC-U v2.00 on Windows x64. Import th
 
 After run 7, Proposed adds 100 to the cap and 2× to the gain rate each run. One qualifying kill adds credit at the selected rate. Each step uses the game's threshold through ×20 and ten stock kills' worth of credit after that. On Death and Proposed are selected on first installation.
 
-Above ×20, the add-on shows its own streak on the HUD. It passes the extra streak value into enemy bursts and keeps OpenRAC and NG++ in charge of coin creation, payout limits and rare-coin handling. The extended portion of the streak is held for the ongoing play session.
+The game's bolt counter shows the full multiplier. The add-on passes the extra streak value into enemy bursts and keeps OpenRAC and NG++ in charge of coin creation, payout limits and rare-coin handling. The extended portion of the streak is held for the ongoing play session.
 
 Challenge Environment Bolts 0.2.0 reads the full active streak from this version on Windows.
 

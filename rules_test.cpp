@@ -7,6 +7,10 @@ constexpr int caps[] = {20, 50, 100, 200, 300, 400, 500, 600};
 constexpr int rates[] = {4, 7, 10, 16, 24, 32, 40, 48};
 
 int main() {
+    if (std::string_view(hud_format(20).data()) != "x%d" ||
+        std::string_view(hud_format(21).data()) != "x21" ||
+        std::string_view(hud_format(500).data()) != "x500" ||
+        std::string_view(hud_format(rules(Curve::Proposed, 32767).cap).data()) != "3276500") return 8;
     for (int i = 0; i < 8; ++i) {
         const int cycle = i + 1;
         const auto proposed = rules(Curve::Proposed, cycle);

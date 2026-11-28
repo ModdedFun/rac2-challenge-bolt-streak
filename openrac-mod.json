@@ -2,7 +2,7 @@
   "format": 2,
   "id": "rac2-challenge-bolt-streak",
   "name": "Challenge Bolt Streak",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Sets how Challenge Mode damage affects the bolt streak and how its cap and gain rate grow on later runs.",
   "license": "GPL-3.0-or-later",
   "api": "1.36",

@@ -4,7 +4,6 @@
 #include "rules.hpp"
 
 #include <array>
-#include <cstdio>
 #include <memory>
 
 namespace {
@@ -25,12 +24,13 @@ struct Disc {
     gaddr hero;
     gaddr reward_slot;
     gaddr bestiary;
+    gaddr hud_format;
 };
 
 constexpr Disc kDiscs[] = {
-    {"pal",   0x001A7A80u, 0x00189EA0u, 0x001A9EF0u, 0x002643B0u},
-    {"ntsc",  0x001A79F8u, 0x00189E20u, 0x001A9E70u, 0x00264630u},
-    {"ntsc2", 0x001A7A00u, 0x00189E20u, 0x001A9E70u, 0x002645F0u},
+    {"pal",   0x001A7A80u, 0x00189EA0u, 0x001A9EF0u, 0x002643B0u, 0x001AE778u},
+    {"ntsc",  0x001A79F8u, 0x00189E20u, 0x001A9E70u, 0x00264630u, 0x001AE708u},
+    {"ntsc2", 0x001A7A00u, 0x00189E20u, 0x001A9E70u, 0x002645F0u, 0x001AE6C0u},
 };
 
 struct Drop {
@@ -58,6 +58,8 @@ class BoltStreak {
 public:
     BoltStreak(openrac::Mod& mod, const Disc& disc)
         : mod_(mod), disc_(disc), damage_(damage_setting(mod)), curve_(curve_setting(mod)) {}
+
+    ~BoltStreak() { restore_hud(); }
 
     int multiplier() const {
         if (!active_) return 0;
@@ -258,21 +260,33 @@ private:
     }
 
     void update_hud(int multiplier) {
-        const int value = multiplier > 20 ? multiplier : 0;
-        if (value == shown_) return;
-        shown_ = value;
-        if (!value) {
-            mod_.hud_text_set({});
+        if (multiplier <= 20) {
+            restore_hud();
             return;
         }
-        openrac_hud_text line{};
-        std::snprintf(line.text, sizeof line.text, "Bolt streak x%d", value);
-        line.x = 0.5f;
-        line.y = 0.12f;
-        line.scale = 1.0f;
-        line.rgba[0] = line.rgba[1] = line.rgba[2] = line.rgba[3] = 128;
-        line.flags = OPENRAC_HUD_SMALL | OPENRAC_HUD_SHADOW;
-        mod_.hud_text_set({line});
+        const auto address = mod_.relocate(disc_.hud_format);
+        if (address != hud_address_) restore_hud();
+        if (!address) return;
+        const auto memory = mod_.memory();
+        const auto current = memory.read<bolt_streak::HudFormat>(address);
+        if (current != bolt_streak::stock_hud_format &&
+            (address != hud_address_ || current != hud_text_)) return;
+
+        // The panel formats this string itself. Only change its text, so it keeps the
+        // game's font, position and fade without exposing an extended value to gameplay.
+        const auto text = bolt_streak::hud_format(multiplier);
+        if (text != current) memory.write(address, text);
+        hud_address_ = address;
+        hud_text_ = text;
+    }
+
+    void restore_hud() {
+        if (!hud_address_) return;
+        const auto memory = mod_.memory();
+        if (memory.read<bolt_streak::HudFormat>(hud_address_) == hud_text_) {
+            memory.write(hud_address_, bolt_streak::stock_hud_format);
+        }
+        hud_address_ = 0;
     }
 
     openrac::Mod& mod_;
@@ -287,7 +301,8 @@ private:
     int level_ = -1;
     std::uint32_t loads_ = 0;
     int last_health_ = 0;
-    int shown_ = 0;
+    gaddr hud_address_ = 0;
+    bolt_streak::HudFormat hud_text_{};
     bool active_ = false;
 };
 
@@ -328,4 +343,4 @@ extern "C" OPENRAC_MOD_EXPORT int rac2_challenge_bolt_streak_multiplier_v1() {
 }
 #endif
 
-OPENRAC_MOD_CPP("rac2-challenge-bolt-streak", "0.2.0", load)
+OPENRAC_MOD_CPP("rac2-challenge-bolt-streak", "0.2.1", load)

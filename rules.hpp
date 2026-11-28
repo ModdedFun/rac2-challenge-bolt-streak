@@ -2,13 +2,27 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <cstdint>
+#include <cstdio>
 #include <string_view>
 
 namespace bolt_streak {
 
 enum class Damage { Default, Lenient, OnDeath };
 enum class Curve { Default, Linear, Proposed };
+
+// The stock counter's format string occupies eight bytes, including padding.
+using HudFormat = std::array<char, 8>;
+inline constexpr HudFormat stock_hud_format{'x', '%', 'd'};
+
+inline HudFormat hud_format(int multiplier) {
+    if (multiplier <= 20) return stock_hud_format;
+    HudFormat text{};
+    // Seven digits fit without the prefix. Even the maximum possible run fits.
+    std::snprintf(text.data(), text.size(), multiplier < 1'000'000 ? "x%d" : "%d", multiplier);
+    return text;
+}
 
 struct Rules {
     int cap;
